@@ -1,19 +1,20 @@
 import os
 import re
 import PyPDF2
+import requests
 
 
 def pdf_extractor():
 
     # email_regex = re.compile(r'[\w.+-]+@[\w-]+\.[\w.-]+[a-zA-Z]')
     email_regex = re.compile(r'[\w.+-]+@[\w-]+\.[\w.-]{3}')
-    phone_regex = re.compile (r'([-\.\s]??\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})')
+    phone_regex = re.compile (r'([-\.\s]??\d{3}[-\.\s]??\d{3}[-\.\s]??\d{5}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{5}|\d{3}[-\.\s]??\d{5})')
     
     pdf_files = list_of_files()
     keys = pdf_files.keys()
 
     for key in keys:
-        print(key)
+        print(key + '...')
         for pdf_file in pdf_files[key]:
             with open(pdf_file, 'rb') as pdf_obj:
                 pdf_reader = PyPDF2.PdfFileReader(pdf_obj)
@@ -34,7 +35,7 @@ def pdf_extractor():
                         .replace(']', '')\
                         .strip("'")
 
-                with open(key + '.txt', 'a+') as extracts:
+                with open(key + '.txt', 'a+', encoding="utf-8") as extracts:
                     details = '{}, {}\n'.format(phone.strip("'") if len(phone) > 0 else '', email if len(email) > 0 else '')
                     contact = details.strip("'")
                     extracts.write(contact.strip("'"))
@@ -58,3 +59,5 @@ def list_of_files():
     return pdf_files
 
 pdf_extractor()
+
+
